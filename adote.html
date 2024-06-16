@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Adote um Pet</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family:'Times New Roman', Times, serif;
+            background-color: #ffe4b5; 
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            text-align: center;
+        }
+
+        h1 {
+            color: #ff6347;
+            margin-bottom: 20px;
+            font-size: 28px;
+        }
+
+        form {
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+            max-width: 400px;
+            width: 100%;
+            box-sizing: border-box;
+            text-align: left;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: bold;
+            color: #555;
+            font-size: 16px;
+        }
+
+        select, input[type="text"], input[type="number"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ff4500;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-size: 14px;
+        }
+
+        button {
+            background-color: #ff6347;
+            color: #fff;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        button:hover {
+            background-color: #ff4500; 
+        }
+
+        ul {
+            list-style: none;
+            padding: 10px;
+            margin: 20px auto;
+            max-height: 300px;
+            overflow-y: auto;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            width: 100%;
+            max-width: 420px;
+            box-sizing: border-box;
+            text-align: left;
+        }
+
+        li {
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        li:last-child {
+            border-bottom: none;
+        }
+    
+        a {
+            display: block;
+            margin-top: 15px;
+            color: #555;
+            text-decoration: none;
+            font-size: 14px;
+            transition: color 0.3s;
+        }
+
+        a:hover {
+            background-color: #ff6347; 
+        }
+    </style>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+    selecioneusuario();
+    posmensagens();
+});
+
+async function selecioneusuario() {
+    try {
+        const response = await fetch('/get-interessados-e-pets');
+        const data = await response.json();
+
+        const selectUsuario = document.getElementById('t');
+        const selectPet = document.getElementById('P');
+
+   
+        selectUsuario.innerHTML = "";
+        selectPet.innerHTML = "";
+
+        data.interessados.forEach(interessado => {
+            const option = document.createElement('option');
+            option.value = interessado.nome;
+            option.text = interessado.nome;
+            selectUsuario.add(option);
+        });
+
+        data.pets.forEach(pet => {
+            const option = document.createElement('option');
+            option.value = pet.nome;
+            option.text = pet.nome;
+            selectPet.add(option);
+        });
+
+    } catch (error) {
+        console.error('Não foi possível acessar interessados e pets:', error);
+    }
+}
+document.addEventListener('DOMContentLoaded', function () {
+    const form = document.getElementById('message-form');
+
+    form.addEventListener('submit', async function (event) {
+        event.preventDefault();
+
+        const usuarioSelecionado = document.getElementById('t').value;
+        const petSelecionado = document.getElementById('P').value;
+
+        const smsDiv = document.getElementById('sms');
+
+   
+        if (!usuarioSelecionado || !petSelecionado) {
+            return alert('Por favor, selecione um usuário e um pet.');
+        }
+
+        try {
+    
+            const response = await fetch('/adotar', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ usuario: usuarioSelecionado, pet: petSelecionado }),
+            });
+
+            if (!response.ok) {
+                throw new Error('Erro ao enviar mensagem. Por favor, tente novamente.');
+            }
+
+            const messageElement = document.createElement('li');
+            messageElement.innerHTML = `<strong>${usuarioSelecionado}:</strong> tem interesse em adotar <strong>${petSelecionado}</strong> - Enviada em ${new Date().toLocaleString()}`;
+            smsDiv.appendChild(messageElement);
+        } catch (error) {
+            console.error('Erro ao enviar mensagem:', error.message);
+            alert('Erro ao enviar mensagem. Por favor, tente novamente.');
+        }
+    });
+});
+
+
+    </script>
+</head>
+<body>
+    <form id="message-form" action="/adotar" method="post">
+        <div>
+            <label for="t">Usuário:</label>
+            <select id="t" name="t"></select>
+
+            <label for="P">Animais:</label>
+            <select id="P" name="P"></select>
+
+            <button type="submit">Adotar</button>
+        </div>
+    </form>
+    <ul id="sms" style="max-height: 300px; overflow-y: auto; border: 1px solid #ddd; padding: 10px; margin-bottom: 10px; width: 400px;"></ul>
+    <a href="/menudeacesso" class="back-button">Voltar ao Menu</a>
+</body>
+</html>

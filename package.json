@@ -1,0 +1,27 @@
+{
+  "name": "trabalhofinalppi",
+  "version": "1.0.0",
+  "description": "Trabalho Final de PPI",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ThalitaZanoni/TrabalhoFinalPPI.git"
+  },
+  "author": "Thalita Zanoni",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ThalitaZanoni/TrabalhoFinalPPI/issues"
+  },
+  "homepage": "https://github.com/ThalitaZanoni/TrabalhoFinalPPI#readme",
+  "dependencies": {
+    "cookie-parser": "^1.4.6",
+    "express": "^4.19.2",
+    "express-session": "^1.18.0",
+    "path": "^0.12.7"
+  }
+}
